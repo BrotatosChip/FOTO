@@ -13,10 +13,10 @@ const duoStrings = {
     en: {
         title: 'Duo mode',
         sub: 'Grab a friend and connect with a simple code.',
-        shareLabel: 'Share this code with your partner:',
-        hint: 'After they join, you’ll pick a layout together.',
+        shareLabel: 'Share your ID with your partner:',
+        hint: 'They need to copy your full ID (shown in small text below the short code). After they join, you can pick a layout together.',
         layoutSub: 'Duo mode supports these styles only.',
-        enterLabel: 'Enter the 4-letter/number code from your host:',
+        enterLabel: 'Paste the complete ID from your host (shown below their short code):',
         hostBtn: 'Host',
         joinBtn: 'Join',
         nextLayout: 'Next: Pick layout',
@@ -33,7 +33,7 @@ const duoStrings = {
 
         statusHosting: 'Hosting room ',
         statusJoining: 'Joining a room',
-        statusEnterCode: 'Please enter a code.',
+        statusEnterCode: 'Please paste the ID.',
         statusConnecting: 'Connecting...',
         statusConnected: 'Connected! Pick layout and continue.',
         statusConnectedTo: 'Connected to ',
@@ -133,8 +133,10 @@ function updateDuoSteps(step) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DUO.JS: Page loaded, initializing...');
     updateDuoSteps(1);
     applyDuoLang(currentLang);
+    console.log('DUO.JS: Initialization complete');
 });
 
 // ----- UI FLOW -----
@@ -153,7 +155,10 @@ function updateStatus(text) {
 }
 
 function chooseRole(role) {
+    console.log('chooseRole called with:', role);
+    
     if (!peer) {
+        console.log('Creating new Peer...');
         peer = new Peer();
         peer.on('connection', handleIncomingConnection);
         peer.on('call', handleIncomingCall);
@@ -161,25 +166,35 @@ function chooseRole(role) {
             console.error('Peer error:', err);
             alert('Connection Error: ' + err.type + '. Please try again.');
         });
+        peer.on('open', id => {
+            console.log('Peer opened with ID:', id);
+            // Store full ID for actual connection, show short code for sharing
+            roomShortCode = id;
+            const codeSpan = document.getElementById('room-code');
+            if (codeSpan && isHost) {
+                // Generate a short, easy-to-share code (6 characters)
+                const shortCode = id.slice(0, 6).toUpperCase();
+                codeSpan.innerHTML = shortCode + '<br/><small style="font-size:0.7em; opacity:0.6;">Full ID: ' + id + '</small>';
+                console.log('Updated room code span with short code:', shortCode);
+            }
+        });
     }
 
     if (role === 'host') {
+        console.log('Setting as host');
         isHost = true;
         const hostPanel = document.getElementById('host-panel');
         const joinPanel = document.getElementById('join-panel');
+        console.log('Host panel found:', !!hostPanel, 'Join panel found:', !!joinPanel);
         if (hostPanel) hostPanel.classList.remove('hidden');
         if (joinPanel) joinPanel.classList.add('hidden');
-
-        peer.on('open', id => {
-            roomShortCode = id.slice(0, 4).toUpperCase();
-            const codeSpan = document.getElementById('room-code');
-            if (codeSpan) codeSpan.innerText = roomShortCode;
-            updateStatus(duoStrings[currentLang].statusHosting + roomShortCode);
-        });
+        updateStatus(duoStrings[currentLang].statusHosting + (roomShortCode ? roomShortCode.slice(0, 6).toUpperCase() : 'Loading...'));
     } else {
+        console.log('Setting as joiner');
         isHost = false;
         const hostPanel = document.getElementById('host-panel');
         const joinPanel = document.getElementById('join-panel');
+        console.log('Host panel found:', !!hostPanel, 'Join panel found:', !!joinPanel);
         if (hostPanel) hostPanel.classList.add('hidden');
         if (joinPanel) joinPanel.classList.remove('hidden');
         updateStatus(duoStrings[currentLang].statusJoining);
@@ -208,20 +223,32 @@ function connectJoin() {
 function doConnect(code) {
     const status = document.getElementById('join-status');
     if (status) status.innerText = duoStrings[currentLang].statusConnecting;
-    conn = peer.connect(code);
-    
+
+    // Use the full ID for connection (must be the complete peer ID, not just first few chars)
+    const fullCode = code.toLowerCase().trim();
+
+    conn = peer.connect(fullCode);
+
+    // Set up event handlers immediately after creating connection
     conn.on('error', (err) => {
         console.error('Connection error:', err);
-        alert('Failed to connect: Invalid code or host is offline. Please check the code and try again.');
-        if (status) status.innerText = 'Connection failed. Check the code!';
+        alert('Failed to connect: "' + fullCode + '" is invalid or the host is offline.\n\nMake sure you copied the COMPLETE ID from the host (the long text shown in small print below their short code).');
+        if (status) status.innerText = 'Connection failed. Check the ID!';
     });
-    
-    setupDataListeners();
+
     conn.on('open', () => {
         if (status) status.innerText = duoStrings[currentLang].statusConnected;
-        updateStatus(duoStrings[currentLang].statusConnectedTo + code.toUpperCase());
+        updateStatus(duoStrings[currentLang].statusConnectedTo + fullCode.slice(0, 8).toUpperCase());
         setShutterVisible(true);
+        // For joiner, hide input/join button and wait for host to select layout
+        if (!isHost) {
+            document.getElementById('join-code').style.display = 'none';
+            document.querySelector('#join-panel .duo-primary').style.display = 'none';
+            if (status) status.innerText = 'Connected! Waiting for host to select layout...';
+        }
     });
+
+    setupDataListeners();
 }
 
 function goToLayout() {
@@ -248,15 +275,17 @@ async function enterCall() {
         if (localVideo) localVideo.srcObject = localStream;
         updateStatus(duoStrings[currentLang].statusCameraWaiting);
 
-        if (!isHost && conn && conn.open) {
-            // JOIN side calls HOST with video
+        if (conn && conn.open) {
+            // Both sides call the other with video to ensure streams are exchanged
             const call = peer.call(conn.peer, localStream);
             call.on('stream', remoteStream => {
                 const rv = document.getElementById('remoteVideo');
                 if (rv) rv.srcObject = remoteStream;
             });
-        } else {
-            // If we are host and already have a connection, wait for partner to call us
+        }
+        // If host, notify joiner to enter camera
+        if (isHost && conn && conn.open) {
+            conn.send({ type: 'ENTER_CAMERA' });
         }
     } catch (err) {
         alert(duoStrings[currentLang].statusCameraDenied);
@@ -269,6 +298,11 @@ function handleIncomingConnection(connection) {
     setupDataListeners();
     updateStatus('Partner connected');
     setShutterVisible(true);
+    // Hide the full ID once connected
+    if (isHost) {
+        const codeSpan = document.getElementById('room-code');
+        if (codeSpan) codeSpan.innerHTML = 'Partner connected!';
+    }
 }
 
 function handleIncomingCall(call) {
@@ -314,6 +348,17 @@ function setupDataListeners() {
                 conn.send({ type: 'SYNC_SNAP' });
                 startCountdown();
             }
+        } else if (data.type === 'ENTER_CAMERA') {
+            // Show button for joiner to allow camera with user gesture
+            updateStatus('Host started camera. Click "Allow Camera" to join.');
+            const allowBtn = document.createElement('button');
+            allowBtn.className = 'duo-primary';
+            allowBtn.innerText = 'Allow Camera';
+            allowBtn.onclick = () => {
+                allowBtn.remove();
+                enterCall();
+            };
+            document.getElementById('role-screen').appendChild(allowBtn);
         }
     });
     
