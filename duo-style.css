@@ -50,6 +50,7 @@ body {
     padding: 28px 24px 32px;
     box-shadow: 0 24px 80px rgba(0,0,0,0.75);
     display: none;
+    z-index: 950;
 }
 
 .duo-panel.active {
