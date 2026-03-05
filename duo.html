@@ -48,6 +48,7 @@
                 <button id="btn-host" class="duo-primary" onclick="chooseRole('host')">Host</button>
                 <button id="btn-join" class="duo-secondary" onclick="chooseRole('join')">Join</button>
             </div>
+            <p id="duo-status-text" class="duo-status-line"></p>
 
             <div id="host-panel" class="duo-host-panel hidden">
                 <p class="duo-label" id="duo-share-label">Share this code with your partner:</p>
@@ -59,8 +60,8 @@
             </div>
 
             <div id="join-panel" class="duo-join-panel hidden">
-                <p class="duo-label" id="duo-enter-label">Enter the 4-letter/number code from your host:</p>
-                <input id="join-code" maxlength="4" class="duo-input" placeholder="AB12" />
+                <p class="duo-label" id="duo-enter-label">Paste the complete ID from your host:</p>
+                <input id="join-code" class="duo-input" placeholder="Paste the full ID here (long text)" />
                 <button class="duo-primary" onclick="connectJoin()">Join room</button>
                 <p id="join-status" class="duo-status-line"></p>
             </div>
