@@ -157,6 +157,10 @@ function chooseRole(role) {
         peer = new Peer();
         peer.on('connection', handleIncomingConnection);
         peer.on('call', handleIncomingCall);
+        peer.on('error', (err) => {
+            console.error('Peer error:', err);
+            alert('Connection Error: ' + err.type + '. Please try again.');
+        });
     }
 
     if (role === 'host') {
@@ -205,6 +209,13 @@ function doConnect(code) {
     const status = document.getElementById('join-status');
     if (status) status.innerText = duoStrings[currentLang].statusConnecting;
     conn = peer.connect(code);
+    
+    conn.on('error', (err) => {
+        console.error('Connection error:', err);
+        alert('Failed to connect: Invalid code or host is offline. Please check the code and try again.');
+        if (status) status.innerText = 'Connection failed. Check the code!';
+    });
+    
     setupDataListeners();
     conn.on('open', () => {
         if (status) status.innerText = duoStrings[currentLang].statusConnected;
