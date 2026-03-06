@@ -1,0 +1,111 @@
+/* --- SPOTLIGHT SPECIFIC STYLES --- */
+
+.spotlight-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 120px; /* Space for the fixed header */
+}
+
+.spotlight-header h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.spotlight-header p {
+    opacity: 0.6;
+    margin-bottom: 40px;
+}
+
+/* Gallery Grid */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 30px;
+    padding: 20px;
+    align-items: start;
+}
+
+/* Delete Functionality Containers */
+.gallery-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    opacity: 0;
+    transition: all 0.2s ease;
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Show button on hover or long-press */
+.gallery-wrapper:hover .delete-btn,
+.gallery-wrapper:active .delete-btn {
+    opacity: 1;
+}
+
+.delete-btn:hover {
+    transform: scale(1.1);
+    background: #ff0000;
+}
+
+.gallery-item {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: var(--ui);
+    border: 1px solid var(--border);
+    cursor: pointer;
+}
+
+.gallery-item:hover {
+    transform: scale(1.03) translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+.empty-msg {
+    grid-column: 1 / -1;
+    padding: 100px 0;
+    opacity: 0.5;
+    font-size: 1.1rem;
+}
+
+.back-home {
+    color: var(--dot);
+    text-decoration: none;
+    font-weight: 700;
+    display: block;
+    margin-top: 15px;
+}
+
+/* Centered Header Overrides */
+header {
+    display: flex;
+    justify-content: center; /* Forces logo to center */
+    align-items: center;
+}
+
+/* Dark Mode Adjustments for Spotlight */
+body.dark-mode .gallery-item {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
