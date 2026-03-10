@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotlight | FOTO.</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="spotlight.css">
+    <style>
+        /* CSS for the Delete Button */
+        .gallery-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        /* Show button on hover or long-press/hold */
+        .gallery-wrapper:hover .delete-btn,
+        .gallery-wrapper:active .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            transform: scale(1.1);
+            background: #ff0000;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-left">
+            <div class="lang-toggle">
+                <button onclick="setPageLang('en')" id="btn-en" class="active">EN</button>
+                <button onclick="setPageLang('kh')" id="btn-kh">KH</button>
+            </div>
+        </div>
+        <div class="nav-center">
+            <h2 class="logo-small" style="cursor: pointer" onclick="location.href='index.html'">FOTO<span class="dot">.</span></h2>
+        </div>
+        <div class="nav-right">
+            <button id="theme-toggle" class="icon-btn">
+                <svg id="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22">
+                    <path class="sun-path" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" stroke-width="2" stroke-linecap="round"></path>
+                    <path class="moon-path hidden" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-width="2" stroke-linecap="round"></path>
+                    <path class="flower-path hidden" d="M11.424 8c.437-.052.811-.136 1.04-.268a2 2 0 0 0-2-3.464c-.229.132-.489.414-.752.767C9.886 4.63 10 4.264 10 4a2 2 0 1 0-4 0c0 .264.114.63.288 1.035-.263-.353-.523-.635-.752-.767a2 2 0 0 0-2 3.464c.229.132.603.216 1.04.268-.437.052-.811.136-1.04.268a2 2 0 1 0 2 3.464c.229-.132.489-.414.752-.767C6.114 11.37 6 11.736 6 12a2 2 0 1 0 4 0c0-.264-.114-.63-.288-1.035.263.353.523.635.752.767a2 2 0 1 0 2-3.464c-.229-.132-.603-.216-1.04-.268M9 4a2 2 0 0 1-.045.205q-.059.2-.183.484a13 13 0 0 1-.637 1.223L8 6.142l-.135-.23a13 13 0 0 1-.637-1.223 4 4 0 0 1-.183-.484A2 2 0 0 1 7 4a1 1 0 1 1 2 0M3.67 5.5a1 1 0 0 1 1.366-.366 2 2 0 0 1 .156.142q.142.15.326.4c.245.333.502.747.742 1.163l.13.232-.265.002a13 13 0 0 1-1.379-.06 4 4 0 0 1-.51-.083 2 2 0 0 1-.2-.064A1 1 0 0 1 3.67 5.5m1.366 5.366a1 1 0 0 1-1-1.732l.047-.02q.055-.02.153-.044.202-.048.51-.083a13 13 0 0 1 1.379-.06q.135 0 .266.002l-.131.232c-.24.416-.497.83-.742 1.163a4 4 0 0 1-.327.4 2 2 0 0 1-.155.142M9 12a1 1 0 0 1-2 0 2 2 0 0 1 .045-.206q.058-.198.183-.483c.166-.378.396-.808.637-1.223L8 9.858l.135.23c.241.415.47.845.637 1.223q.124.285.183.484A1.3 1.3 0 0 1 9 12m3.33-6.5a1 1 0 0 1-.366 1.366 2 2 0 0 1-.2.064q-.202.048-.51.083c-.412.045-.898.061-1.379.06q-.135 0-.266-.002l.131-.232c.24-.416.497-.83.742-1.163a4 4 0 0 1 .327-.4q.07-.074.114-.11l.041-.032a1 1 0 0 1 1.366.366m-1.366 5.366a2 2 0 0 1-.155-.141 4 4 0 0 1-.327-.4A13 13 0 0 1 9.74 9.16l-.13-.232.265-.002c.48-.001.967.015 1.379.06q.308.035.51.083.098.024.153.044l.048.02a1 1 0 1 1-1 1.732zM8 9a1 1 0 1 1 0-2 1 1 0 0 1 0 2" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="spotlight-container">
+        <div class="spotlight-header">
+            <h1 id="txt-title">Recent Snaps</h1>
+            <p id="txt-subtitle">Your digital memory wall</p>
+        </div>
+
+        <div id="gallery-grid" class="gallery-grid"></div>
+
+        <button id="btn-clear" class="s-btn" onclick="clearGallery()" style="max-width: 200px; margin-top: 50px; margin-bottom: 50px;">
+            Clear History
+        </button>
+    </main>
+
+    <script>
+        const i18n = {
+            en: {
+                title: "Recent Snaps",
+                subtitle: "Your digital memory wall",
+                clear: "Clear History",
+                empty: "No photos yet.",
+                go: "Go to the booth to start!",
+                confirm: "Clear all saved photos? This cannot be undone.",
+                confirmOne: "Delete this photo?"
+            },
+            kh: {
+                title: "រូបថតថ្មីៗ",
+                subtitle: "ជញ្ជាំងអនុស្សាវរីយ៍ឌីជីថលរបស់អ្នក",
+                clear: "លុបប្រវត្តិរូបថត",
+                empty: "មិនទាន់មានរូបថតនៅឡើយទេ។",
+                go: "ទៅកាន់កន្លែងថតរូបដើម្បីចាប់ផ្តើម!",
+                confirm: "តើអ្នកពិតជាចង់លុបរូបថតទាំងអស់មែនទេ? ការលុបនេះមិនអាចត្រឡប់ក្រោយវិញបានទេ។",
+                confirmOne: "តើអ្នកចង់លុបរូបថតនេះមែនទេ?"
+            }
+        };
+
+        function getStrings() {
+            const curLang = localStorage.getItem('foto_lang') || 'en';
+            return i18n[curLang];
+        }
+
+        window.onload = renderGallery;
+
+        function renderGallery() {
+            const t = getStrings();
+            document.getElementById('txt-title').innerText = t.title;
+            document.getElementById('txt-subtitle').innerText = t.subtitle;
+            document.getElementById('btn-clear').innerText = t.clear;
+
+            const gallery = JSON.parse(localStorage.getItem('foto_gallery') || '[]');
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+
+            if (gallery.length === 0) {
+                grid.innerHTML = `
+                    <div class='empty-msg'>
+                        <p>${t.empty}</p>
+                        <a href='index.html' class='back-home'>${t.go}</a>
+                    </div>`;
+                return;
+            }
+
+            gallery.forEach((src, index) => {
+                // Create container
+                const wrapper = document.createElement('div');
+                wrapper.className = "gallery-wrapper";
+
+                // Create image
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = "gallery-item";
+                img.onclick = () => downloadOne(src);
+
+                // Create Delete (Red Cross)
+                const delBtn = document.createElement('button');
+                delBtn.className = "delete-btn";
+                delBtn.innerHTML = "✕";
+                delBtn.onclick = (e) => {
+                    e.stopPropagation(); // Don't trigger the download
+                    deletePhoto(index);
+                };
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(delBtn);
+                grid.appendChild(wrapper);
+            });
+        }
+
+        function downloadOne(src) {
+            const link = document.createElement('a');
+            link.href = src;
+            link.download = `FOTO_RECALL_${Date.now()}.png`;
+            link.click();
+        }
+
+        function deletePhoto(index) {
+            const t = getStrings();
+            if(confirm(t.confirmOne)) {
+                let gallery = JSON.parse(localStorage.getItem('foto_gallery') || '[]');
+                gallery.splice(index, 1); // Remove item at this index
+                localStorage.setItem('foto_gallery', JSON.stringify(gallery));
+                renderGallery(); // Refresh the view
+            }
+        }
+
+        function clearGallery() {
+            const t = getStrings();
+            if(confirm(t.confirm)) {
+                localStorage.removeItem('foto_gallery');
+                renderGallery();
+            }
+        }
+    </script>
+    <script src="settings-shared.js"></script>
+</body>
+</html>

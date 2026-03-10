@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOTO. | Digital Photo Booth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="light-mode">
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <div id="flash"></div>
+
+    <header>
+        <div class="nav-left">
+            <div class="lang-toggle">
+                <button onclick="setLang('en')" id="btn-en" class="active">EN</button>
+                <button onclick="setLang('kh')" id="btn-kh">KH</button>
+            </div>
+        </div>
+        <div class="nav-center">
+            <h2 class="logo-small" onclick="location.reload()">FOTO<span class="dot">.</span></h2>
+        </div>
+        <div class="nav-right">
+            <button id="theme-toggle" class="icon-btn">
+                <svg id="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22">
+                    <path class="sun-path" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" stroke-width="2" stroke-linecap="round"></path>
+                    <path class="moon-path hidden" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-width="2" stroke-linecap="round"></path>
+                    <path class="flower-path hidden" d="M11.424 8c.437-.052.811-.136 1.04-.268a2 2 0 0 0-2-3.464c-.229.132-.489.414-.752.767C9.886 4.63 10 4.264 10 4a2 2 0 1 0-4 0c0 .264.114.63.288 1.035-.263-.353-.523-.635-.752-.767a2 2 0 0 0-2 3.464c.229.132.603.216 1.04.268-.437.052-.811.136-1.04.268a2 2 0 1 0 2 3.464c.229-.132.489-.414.752-.767C6.114 11.37 6 11.736 6 12a2 2 0 1 0 4 0c0-.264-.114-.63-.288-1.035.263.353.523.635.752.767a2 2 0 1 0 2-3.464c-.229-.132-.603-.216-1.04-.268M9 4a2 2 0 0 1-.045.205q-.059.2-.183.484a13 13 0 0 1-.637 1.223L8 6.142l-.135-.23a13 13 0 0 1-.637-1.223 4 4 0 0 1-.183-.484A2 2 0 0 1 7 4a1 1 0 1 1 2 0M3.67 5.5a1 1 0 0 1 1.366-.366 2 2 0 0 1 .156.142q.142.15.326.4c.245.333.502.747.742 1.163l.13.232-.265.002a13 13 0 0 1-1.379-.06 4 4 0 0 1-.51-.083 2 2 0 0 1-.2-.064A1 1 0 0 1 3.67 5.5m1.366 5.366a1 1 0 0 1-1-1.732l.047-.02q.055-.02.153-.044.202-.048.51-.083a13 13 0 0 1 1.379-.06q.135 0 .266.002l-.131.232c-.24.416-.497.83-.742 1.163a4 4 0 0 1-.327.4 2 2 0 0 1-.155.142M9 12a1 1 0 0 1-2 0 2 2 0 0 1 .045-.206q.058-.198.183-.483c.166-.378.396-.808.637-1.223L8 9.858l.135.23c.241.415.47.845.637 1.223q.124.285.183.484A1.3 1.3 0 0 1 9 12m3.33-6.5a1 1 0 0 1-.366 1.366 2 2 0 0 1-.2.064q-.202.048-.51.083c-.412.045-.898.061-1.379.06q-.135 0-.266-.002l.131-.232c.24-.416.497-.83.742-1.163a4 4 0 0 1 .327-.4q.07-.074.114-.11l.041-.032a1 1 0 0 1 1.366.366m-1.366 5.366a2 2 0 0 1-.155-.141 4 4 0 0 1-.327-.4A13 13 0 0 1 9.74 9.16l-.13-.232.265-.002c.48-.001.967.015 1.379.06q.308.035.51.083.098.024.153.044l.048.02a1 1 0 1 1-1 1.732zM8 9a1 1 0 1 1 0-2 1 1 0 0 1 0 2" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div id="progress-bar" class="hidden">
+        <div class="step-box" id="st-1"><span>1</span><label id="lbl-step1">Layout</label></div>
+        <div class="step-connector"></div>
+        <div class="step-box" id="st-2"><span>2</span><label id="lbl-step2">Snap</label></div>
+        <div class="step-connector"></div>
+        <div class="step-box" id="st-3"><span>3</span><label id="lbl-step3">Design</label></div>
+    </div>
+
+    <main>
+        <section id="view-home" class="view active">
+            <h1 class="main-logo">FOTO<span class="dot">.</span></h1>
+            <div class="home-actions" style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+                <button class="start-btn" onclick="startApp()" id="btn-start">START SESSION</button>
+                
+                <button class="s-btn" onclick="window.location.href='duo.html'" style="font-size: 11px; padding: 10px 24px; width: auto;">
+                    DUO MODE
+                </button>
+            </div>
+        </section>
+
+        <section id="view-layout" class="view">
+            <h2 class="view-title" id="title-layout">Select Style</h2>
+            
+            <div class="layout-carousel">
+                <button class="nav-arrow left" onclick="scrollLayouts(-1)">&#8249;</button>
+                
+                <div class="layout-viewport" id="layout-viewport">
+                    <div class="layout-track">
+                        <div class="layout-card" onclick="selectLayout('A')">
+                            <div class="l-preview v-strip"><span></span><span></span><span></span><div class="p-txt">abc</div></div>
+                            <label>STYLE A</label>
+                        </div>
+                        <div class="layout-card" onclick="selectLayout('B')">
+                            <div class="l-preview v-strip"><span></span><span></span><span></span><span></span></div>
+                            <label>STYLE B</label>
+                        </div>
+                        <div class="layout-card" onclick="selectLayout('C')">
+                            <div class="l-preview v-strip"><div class="p-txt">TITLE</div><span></span><span></span><span></span><span></span></div>
+                            <label>STYLE C</label>
+                        </div>
+                        <div class="layout-card" onclick="selectLayout('D')">
+                            <div class="l-preview v-strip"><span class="big"></span><span class="big"></span></div>
+                            <label>STYLE D</label>
+                        </div>
+                        <div class="layout-card" onclick="selectLayout('E')">
+                            <div class="l-preview v-strip"><span></span><span></span><span></span><div class="p-logo">●</div></div>
+                            <label>STYLE E</label>
+                        </div>
+                        <div class="layout-card" onclick="selectLayout('F')">
+                            <div class="l-preview v-grid"><span></span><span></span><span></span><span></span></div>
+                            <label>STYLE F</label>
+                        </div>
+                        <div class="layout-card" onclick="selectLayout('G')">
+                            <div class="l-preview v-strip"><div class="p-dot">.</div><span></span><span></span><span></span><div class="p-dot">.</div></div>
+                            <label>STYLE G</label>
+                        </div>
+                        <div class="layout-card" onclick="selectLayout('H')">
+                            <div class="l-preview v-strip"><span class="land"></span><span class="land"></span><div class="p-txt">...</div></div>
+                            <label>STYLE H</label>
+                        </div>
+
+                        <div class="layout-card" onclick="selectLayout('I')">
+                            <div class="l-preview h-print"><span class="full"></span><div class="p-txt-h">FOTO.</div></div>
+                            <label>STYLE I</label>
+                        </div>
+                        <div class="layout-card" onclick="selectLayout('J')">
+                            <div class="l-preview h-print"><span class="top-big"></span><div class="row"><span></span><span></span><span></span></div></div>
+                            <label>STYLE J</label>
+                        </div>
+                        <div class="layout-card" onclick="selectLayout('K')">
+                            <div class="l-preview h-grid"><span></span><span></span><span></span><span></span></div>
+                            <label>STYLE K</label>
+                        </div>
+                        <div class="layout-card" onclick="selectLayout('L')">
+                            <div class="l-preview h-grid-side"><div class="p-side">txt</div><div class="g-2x2"><span></span><span></span><span></span><span></span></div></div>
+                            <label>STYLE L</label>
+                        </div>
+                        <div class="layout-card" onclick="selectLayout('M')">
+                            <div class="l-preview h-print"><div class="p-txt-h">TITLE</div><div class="row"><span></span><span></span></div></div>
+                            <label>STYLE M</label>
+                        </div>
+                        <div class="layout-card" onclick="selectLayout('N')">
+                            <div class="l-preview h-grid"><span></span><span></span><span></span><span></span></div>
+                            <label>STYLE N</label>
+                        </div>
+                        <div class="layout-card" onclick="selectLayout('O')">
+                            <div class="l-preview h-print"><div class="row"><span></span><span></span></div></div>
+                            <label>STYLE O</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="nav-arrow right" onclick="scrollLayouts(1)">&#8250;</button>
+            </div>
+        </section>
+
+        <section id="view-camera" class="view">
+            <div class="cam-wrapper">
+                <div class="cam-box">
+                    <div id="duo-status" class="duo-badge hidden">
+                        <span class="pulse-dot"></span>
+                        <span id="duo-partner-name">LINKED TO PARTNER</span>
+                    </div>
+
+                    <video id="video" autoplay playsinline></video>
+                    <video id="remoteVideo" class="remote-video hidden" autoplay playsinline></video>
+                    <div id="countdown" class="hidden">3</div>
+                    <div class="snap-badge"><span id="count-num">0</span>/<span id="max-num">4</span></div>
+                </div>
+                
+                <div class="cam-controls">
+                    <div class="filter-bar">
+                        <button class="f-pill active" onclick="setFilter('none')">Natural</button>
+                        <button class="f-pill" onclick="setFilter('grayscale(100%)')">B&W</button>
+                        <button class="f-pill" onclick="setFilter('sepia(60%) contrast(1.1)')">Retro</button>
+                        <button class="f-pill" onclick="setFilter('brightness(1.2) saturate(1.5)')">Vivid</button>
+                    </div>
+                    <div class="shutter-container">
+                        <button id="shutter" class="shutter-btn" onclick="syncShutter()"></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-editor" class="view">
+            <div class="editor-wrap">
+                <div class="preview-area">
+                    <div id="final-strip" class="photo-strip">
+                        <div id="strip-inner"></div>
+                        <div class="strip-footer" id="strip-footer-text">FOTO. — 2026</div>
+                    </div> 
+                </div>
+                <div class="controls-area">
+                    <h3 id="title-frame">Frame Design</h3>
+                    
+                    <div class="color-row">
+                        <button class="c-dot" style="background:#fff" onclick="changeDesign('white')" title="White"></button>
+                        <button class="c-dot" style="background:#fce4ec" onclick="changeDesign('pink')" title="Pink"></button>
+                        <button class="c-dot film-opt" onclick="changeDesign('film')" title="Film Strip"></button>
+                        <button class="c-dot" style="background:#f4f1ea; border-radius: 4px;" onclick="changeDesign('90s')" title="90s Magazine"></button>
+                        <button class="c-dot" style="background:#eee; border-bottom: 8px solid #ccc; height: 38px;" onclick="changeDesign('polaroid')" title="Polaroid"></button>
+                    </div>
+
+                    <div class="color-row" style="margin-top: 10px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;">
+                        <button class="c-dot" style="background:#d4e09b" onclick="changeDesign('#d4e09b')" title="Matcha"></button>
+                        <button class="c-dot" style="background:#e2d1f9" onclick="changeDesign('#e2d1f9')" title="Lavender"></button>
+                        <button class="c-dot" style="background:#cae9ff" onclick="changeDesign('#cae9ff')" title="Sky"></button>
+                        <button class="c-dot" style="background:#fff4bd" onclick="changeDesign('#fff4bd')" title="Butter"></button>
+                        <button class="c-dot" style="background:#d8ae94" onclick="changeDesign('#d8ae94')" title="Clay"></button>
+                        <button class="c-dot" style="background:#b2ac88" onclick="changeDesign('#b2ac88')" title="Sage"></button>
+                        <button class="c-dot" style="background:#e1ad01" onclick="changeDesign('#e1ad01')" title="Mustard"></button>
+                        <button class="c-dot" style="background:#4d7c8a" onclick="changeDesign('#4d7c8a')" title="Teal"></button>
+                        <button class="c-dot" style="background:#f8c8dc" onclick="changeDesign('#f8c8dc')" title="Blush"></button>
+                        <button class="c-dot" style="background:#a9d1d1" onclick="changeDesign('#a9d1d1')" title="Mint"></button>
+                    </div>
+
+                    <div class="sticker-panel">
+                        <div class="sticker-tabs" id="sticker-tabs"></div>
+                        <div class="sticker-grid" id="sticker-grid"></div>
+                    </div>
+
+                    <div class="action-stack" style="margin-top: 30px;">
+                        <button class="p-btn" onclick="finishSession()" id="btn-save">Save & Finish</button>
+                        <button class="s-btn" onclick="location.reload()" id="btn-discard">Discard</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <a href="spotlight.html" class="spotlight-btn" id="spotlight-btn">
+        <div class="spotlight-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+        </div>
+        <span id="lbl-spotlight">Memories</span>
+    </a>
+
+    <canvas id="hidden-canvas" style="display:none;"></canvas>
+    <script src="settings-shared.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
