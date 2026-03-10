@@ -118,43 +118,13 @@ window.addEventListener('fotoLangChange', e => applyDuoLang(e.detail));
 // Sticker categories. Update these paths to match your sticker folders.
 const STICKER_SETS = {
     Peppe: [
-        'stickers/Peppe/sticker_1.webp',
-        'stickers/Peppe/sticker_2.webp',
-        'stickers/Peppe/sticker_3.webp',
-        'stickers/Peppe/sticker_4.webp',
-        'stickers/Peppe/sticker_5.webp',
-        'stickers/Peppe/sticker_6.webp',
-        'stickers/Peppe/sticker_7.webp',
-        'stickers/Peppe/sticker_8.webp',
-        'stickers/Peppe/sticker_9.png',
-        'stickers/Peppe/sticker_10.webp',
-        'stickers/Peppe/sticker_11.webp',
-        'stickers/Peppe/sticker_12.webp',
-        'stickers/Peppe/sticker_13.png',
-        'stickers/Peppe/sticker_14.webp',
-        'stickers/Peppe/sticker_15.webp',
-        'stickers/Peppe/sticker_16.png',
-        'stickers/Peppe/sticker_17.webp'
+        'stickers/Peppe/peppe-heart.png',
+        'stickers/Peppe/peppe-sad.png',
+        'stickers/Peppe/peppe-love.png'
     ],
     'Pengo-motes': [
-        'stickers/Pengo-motes/sticker_1.png',
-        'stickers/Pengo-motes/sticker_2.webp',
-        'stickers/Pengo-motes/sticker_3.png',
-        'stickers/Pengo-motes/sticker_4.webp',
-        'stickers/Pengo-motes/sticker_5.png',
-        'stickers/Pengo-motes/sticker_7.png',
-        'stickers/Pengo-motes/sticker_8.webp',
-        'stickers/Pengo-motes/sticker_12.png',
-        'stickers/Pengo-motes/sticker_13.png',
-        'stickers/Pengo-motes/sticker_15.png',
-        'stickers/Pengo-motes/sticker_19.png',
-        'stickers/Pengo-motes/sticker_20.png',
-        'stickers/Pengo-motes/sticker_14.webp',
-        'stickers/Pengo-motes/sticker_22.webp',
-        'stickers/Pengo-motes/sticker_23.png',
-        'stickers/Pengo-motes/sticker_27.png',
-        'stickers/Pengo-motes/sticker_penquin.png',
-        'stickers/Pengo-motes/sticker_26.png'
+        'stickers/Pengo-motes/pengo-smile.png',
+        'stickers/Pengo-motes/pengo-cry.png'
     ]
 };
 
@@ -283,29 +253,70 @@ function enableStickerDraggingAndResizing(wrapper, handle) {
         e.preventDefault();
     });
 
-    document.addEventListener('mousemove', (e) => {
+    // touch support
+    wrapper.addEventListener('touchstart', (e) => {
+        if (e.target === handle) return;
+        const t = e.touches[0];
+        drag = true;
+        startX = t.clientX;
+        startY = t.clientY;
+        const rect = wrapper.getBoundingClientRect();
+        startLeft = rect.left;
+        startTop = rect.top;
+        e.preventDefault();
+    }, { passive: false });
+
+    handle.addEventListener('touchstart', (e) => {
+        const rect = wrapper.getBoundingClientRect();
+        const t = e.touches[0];
+        resize = true;
+        startX = t.clientX;
+        startY = t.clientY;
+        startWidth = rect.width;
+        startHeight = rect.height;
+        e.stopPropagation();
+        e.preventDefault();
+    }, { passive: false });
+
+    function handlePointerMove(clientX, clientY) {
         const strip = document.getElementById('final-strip');
         if (!strip) return;
         const stripRect = strip.getBoundingClientRect();
 
         if (drag) {
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
+            const dx = clientX - startX;
+            const dy = clientY - startY;
             const newLeft = startLeft + dx - stripRect.left;
             const newTop = startTop + dy - stripRect.top;
             wrapper.style.left = `${newLeft}px`;
             wrapper.style.top = `${newTop}px`;
             wrapper.style.transform = ''; // disable centering transform once moved
         } else if (resize) {
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
+            const dx = clientX - startX;
+            const dy = clientY - startY;
             const size = Math.max(30, startWidth + dx, startHeight + dy);
             wrapper.style.width = `${size}px`;
             wrapper.style.height = `${size}px`;
         }
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        handlePointerMove(e.clientX, e.clientY);
     });
 
     document.addEventListener('mouseup', () => {
+        drag = false;
+        resize = false;
+    });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!drag && !resize) return;
+        const t = e.touches[0];
+        handlePointerMove(t.clientX, t.clientY);
+        e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('touchend', () => {
         drag = false;
         resize = false;
     });
@@ -886,5 +897,4 @@ function requestRetake() {
         conn.send({ type: 'RETAKE_REQUEST' });
         alert('Retake request sent. Waiting for your partner...');
     }
-
 }
