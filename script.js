@@ -466,29 +466,70 @@ function enableStickerDraggingAndResizing(wrapper, handle) {
         e.preventDefault();
     });
 
-    document.addEventListener('mousemove', (e) => {
+    // touch support
+    wrapper.addEventListener('touchstart', (e) => {
+        if (e.target === handle) return;
+        const t = e.touches[0];
+        drag = true;
+        startX = t.clientX;
+        startY = t.clientY;
+        const rect = wrapper.getBoundingClientRect();
+        startLeft = rect.left;
+        startTop = rect.top;
+        e.preventDefault();
+    }, { passive: false });
+
+    handle.addEventListener('touchstart', (e) => {
+        const rect = wrapper.getBoundingClientRect();
+        const t = e.touches[0];
+        resize = true;
+        startX = t.clientX;
+        startY = t.clientY;
+        startWidth = rect.width;
+        startHeight = rect.height;
+        e.stopPropagation();
+        e.preventDefault();
+    }, { passive: false });
+
+    function handlePointerMove(clientX, clientY) {
         const strip = document.getElementById('final-strip');
         if (!strip) return;
         const stripRect = strip.getBoundingClientRect();
 
         if (drag) {
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
+            const dx = clientX - startX;
+            const dy = clientY - startY;
             const newLeft = startLeft + dx - stripRect.left;
             const newTop = startTop + dy - stripRect.top;
             wrapper.style.left = `${newLeft}px`;
             wrapper.style.top = `${newTop}px`;
             wrapper.style.transform = '';
         } else if (resize) {
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
+            const dx = clientX - startX;
+            const dy = clientY - startY;
             const size = Math.max(30, startWidth + dx, startHeight + dy);
             wrapper.style.width = `${size}px`;
             wrapper.style.height = `${size}px`;
         }
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        handlePointerMove(e.clientX, e.clientY);
     });
 
     document.addEventListener('mouseup', () => {
+        drag = false;
+        resize = false;
+    });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!drag && !resize) return;
+        const t = e.touches[0];
+        handlePointerMove(t.clientX, t.clientY);
+        e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('touchend', () => {
         drag = false;
         resize = false;
     });
