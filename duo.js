@@ -118,13 +118,43 @@ window.addEventListener('fotoLangChange', e => applyDuoLang(e.detail));
 // Sticker categories. Update these paths to match your sticker folders.
 const STICKER_SETS = {
     Peppe: [
-        'stickers/Peppe/peppe-heart.png',
-        'stickers/Peppe/peppe-sad.png',
-        'stickers/Peppe/peppe-love.png'
+        'stickers/Peppe/sticker_1.webp',
+        'stickers/Peppe/sticker_2.webp',
+        'stickers/Peppe/sticker_3.webp',
+        'stickers/Peppe/sticker_4.webp',
+        'stickers/Peppe/sticker_5.webp',
+        'stickers/Peppe/sticker_6.webp',
+        'stickers/Peppe/sticker_7.webp',
+        'stickers/Peppe/sticker_8.webp',
+        'stickers/Peppe/sticker_9.png',
+        'stickers/Peppe/sticker_10.webp',
+        'stickers/Peppe/sticker_11.webp',
+        'stickers/Peppe/sticker_12.webp',
+        'stickers/Peppe/sticker_13.png',
+        'stickers/Peppe/sticker_14.webp',
+        'stickers/Peppe/sticker_15.webp',
+        'stickers/Peppe/sticker_16.png',
+        'stickers/Peppe/sticker_17.webp'
     ],
     'Pengo-motes': [
-        'stickers/Pengo-motes/pengo-smile.png',
-        'stickers/Pengo-motes/pengo-cry.png'
+        'stickers/Pengo-motes/sticker_1.png',
+        'stickers/Pengo-motes/sticker_2.webp',
+        'stickers/Pengo-motes/sticker_3.png',
+        'stickers/Pengo-motes/sticker_4.webp',
+        'stickers/Pengo-motes/sticker_5.png',
+        'stickers/Pengo-motes/sticker_7.png',
+        'stickers/Pengo-motes/sticker_8.webp',
+        'stickers/Pengo-motes/sticker_12.png',
+        'stickers/Pengo-motes/sticker_13.png',
+        'stickers/Pengo-motes/sticker_15.png',
+        'stickers/Pengo-motes/sticker_19.png',
+        'stickers/Pengo-motes/sticker_20.png',
+        'stickers/Pengo-motes/sticker_14.webp',
+        'stickers/Pengo-motes/sticker_22.webp',
+        'stickers/Pengo-motes/sticker_23.png',
+        'stickers/Pengo-motes/sticker_27.png',
+        'stickers/Pengo-motes/sticker_penquin.png',
+        'stickers/Pengo-motes/sticker_26.png'
     ]
 };
 
@@ -856,4 +886,5 @@ function requestRetake() {
         conn.send({ type: 'RETAKE_REQUEST' });
         alert('Retake request sent. Waiting for your partner...');
     }
+
 }
